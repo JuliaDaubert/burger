@@ -1,4 +1,4 @@
-# Burger App
+# 🍔Burger App🍔
 
 Burger logger with MySQL, Node, Express, Handlebars and a homemade ORM (yum!). Be sure to follow the MVC design pattern; use Node and MySQL to query and route data in your app, and Handlebars to generate your HTML.
 
@@ -56,7 +56,7 @@ The application will be deployed in **Heroku**:
 
 <br>
 
-**The Application is not running yet.**
+ 😩 **The Application is not running yet.** 😩
 
 <br>
 Debugging required for:
