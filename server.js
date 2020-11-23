@@ -10,4 +10,4 @@ app.get('/', function (req, res) {
 })
  
 //Heroku requires 8080
-app.listen(8080)
+app.listen(process.env.PORT)
