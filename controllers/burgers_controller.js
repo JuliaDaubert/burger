@@ -1,32 +1,61 @@
-// Import orm.js into burger.js
-var orm = require("../config/orm.js");
-// The code that will call the ORM functions using burger specific input for the ORM.
-var burger = {
-    // Display all burgers in the db.
-    selectAll: function(cb) {
-        orm.selectAll("burgers", function(res) {
-            cb(res);
-        });
-    },
-    // Add a new burger to the db.
-    insertOne: function(cols, vals, cb) {
-        orm.insertOne("burgers", cols, vals, function(res) {
-            cb(res);
-        });
-    },
-    // Change the devoured status to true.
-    updateOne: function(objColVals, condition, cb) {
-        orm.updateOne("burgers", objColVals, condition, function(res) {
-            cb(res);
-        });
-    },
-    // Delete a burger from the db.
-    deleteOne: function(condition, cb) {
-        orm.deleteOne("burgers", condition, function(res) {
-            cb(res);
-        });
-    }
-};
+// DEPENDENCIES
+const express = require("express");
+const burger = require("../models/burger");
 
-// Export at the end of the burger.js file.
-module.exports = burger;
+// CREATE ROUTER
+const router = express.Router();
+
+// GET 
+router.get("/", function (request, response) {
+    burger.selectAll(function (data) {
+        const hbsObject = {
+            burger: data
+        };
+        console.log(`--> ${logSymbols.info} Sending: ${JSON.stringify(hbsObject)}`);
+        response.render("index", hbsObject);
+    });
+});
+
+// POST
+router.post("/api/burgers", function (request, response) {
+    burger.insertOne("burger_name", request.body.burger_name, function (result) {
+        response.json({ id: result.insertId });
+    });
+});
+
+// UPDATE
+router.put("/api/burgers/:new", function (request, response) {
+    const id = request.params.new;
+    const devoured = request.body.devoured;
+
+    console.log(`--> Devoured(${id}): ${devoured}`);
+
+    burger.updateOne("devoured", devoured, id, function (result) {
+        if (result.changedRows == 0) {
+            return response.status(404).end();
+        }
+        else {
+            response.status(200).end();
+        }
+    });
+});
+
+// DELETE
+router.delete("/api/burgers/:new", function (request, response) {
+    const id = request.params.new;
+
+    console.log(`--> Deleted(${id})`);
+
+    burger.deleteOne("burgers", id, function (result) {
+        
+        if (result.affectedRows == 0) {
+            return response.status(404).end();
+        }
+        else {
+            response.status(200).end();
+        }
+    });
+});
+
+// EXPORTS
+module.exports = router;
